@@ -18,6 +18,7 @@ serialization = "1.7.3"
 media3 = "1.5.1"
 appcompat = "1.7.1"
 ffmpeg = "8.1.7"
+smartException = "0.2.1"
 junit = "4.13.2"
 androidxJunit = "1.2.1"
 espresso = "3.6.1"
@@ -54,6 +55,8 @@ coil-video = { group = "io.coil-kt", name = "coil-video", version.ref = "coil" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
 ffmpeg-kit = { group = "dev.ffmpegkit-maintained", name = "ffmpeg-kit-full-gpl", version.ref = "ffmpeg" }
+# Maintained ffmpeg-kit AARs omit this transitive dep, but FFmpegKitConfig.<clinit> requires it.
+smart-exception-java = { group = "com.arthenica", name = "smart-exception-java", version.ref = "smartException" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxJunit" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }

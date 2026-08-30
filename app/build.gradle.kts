@@ -32,7 +32,8 @@ android {
             "pl", "pt", "ro", "ru", "sv", "th", "tr", "uk", "ur", "vi",
         )
         ndk {
-            abiFilters += listOf("armeabi-v7a", "arm64-v8a")
+            // ffmpeg-kit-maintained 8.1.x ships arm64-v8a (+ x86_64 for emulators) only.
+            abiFilters += listOf("arm64-v8a")
         }
     }
 

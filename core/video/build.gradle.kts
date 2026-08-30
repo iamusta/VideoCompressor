@@ -20,4 +20,6 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.ffmpeg.kit)
+    // Required by FFmpegKitConfig static init; not declared in maintained AAR POM.
+    implementation(libs.smart.exception.java)
 }
