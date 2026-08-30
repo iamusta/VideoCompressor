@@ -1,10 +1,25 @@
 # Keep line numbers for crash reports
 -keepattributes SourceFile,LineNumberTable,InnerClasses,Signature,Exceptions,*Annotation*
 
-# FFmpegKit
+# FFmpegKit (matches AAR consumer rules + full package keep)
 -keep class com.arthenica.ffmpegkit.** { *; }
 -keep class com.arthenica.smartexception.** { *; }
 -dontwarn com.arthenica.**
+
+-keep class com.arthenica.ffmpegkit.FFmpegKitConfig {
+    native <methods>;
+    void log(long, int, byte[]);
+    void statistics(long, int, float, float, long, double, double, double);
+    int safOpen(int);
+    int safClose(int);
+}
+
+-keep class com.arthenica.ffmpegkit.AbiDetect {
+    native <methods>;
+}
+
+-keep class com.arthenica.ffmpegkit.*Callback { *; }
+-keep class com.arthenica.ffmpegkit.*Session { *; }
 
 # Hilt / Dagger
 -keep class dagger.** { *; }
