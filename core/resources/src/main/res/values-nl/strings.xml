@@ -3,8 +3,10 @@
     <string name="app_name">Video Compressor</string>
     <string name="intent_open_with">Openen met Video Compressor</string>
     <string name="intent_share_to">Video Compressor</string>
-    <string name="home_title">Videotools</string>
+    <string name="home_title">Wat wil je doen?</string>
     <string name="home_subtitle">Comprimeren, converteren en bewerken — 100% op je apparaat.</string>
+    <string name="home_on_device">Op het apparaat</string>
+    <string name="home_hero_cta">Start</string>
     <string name="home_section_essentials">Essentieel</string>
     <string name="home_section_edit">Bewerken en meer</string>
     <string name="nav_home">Home</string>
@@ -121,7 +123,7 @@
     <string name="theme_system">Systeem</string>
     <string name="theme_light">Licht</string>
     <string name="theme_dark">Donker</string>
-    <string name="language_system">System default</string>
+    <string name="language_system">Systeemstandaard</string>
     <string name="language_en">English</string>
     <string name="language_es">Español</string>
     <string name="language_zh">中文</string>
@@ -152,4 +154,10 @@
     <string name="language_hu">Magyar</string>
     <string name="language_he">עברית</string>
     <string name="language_ur">اردو</string>
+    <string name="error_process_failed">Verwerken mislukt. Probeer een andere video.</string>
+    <string name="error_read_video">Deze video kan niet worden gelezen. Probeer een ander bestand.</string>
+    <string name="error_no_audio">Deze video heeft geen audiospoor.</string>
+    <string name="error_ffmpeg_load">FFmpeg kon niet worden geladen. Installeer de app opnieuw op een arm64-apparaat.</string>
+    <string name="error_select_video">Selecteer eerst een video.</string>
+    <string name="error_empty_file">Het geselecteerde bestand is leeg of onleesbaar.</string>
 </resources>

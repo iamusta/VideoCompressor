@@ -3,8 +3,10 @@
     <string name="app_name">Video Compressor</string>
     <string name="intent_open_with">Открыть в Video Compressor</string>
     <string name="intent_share_to">Video Compressor</string>
-    <string name="home_title">Инструменты для видео</string>
+    <string name="home_title">Что хотите сделать?</string>
     <string name="home_subtitle">Сжимайте, конвертируйте и редактируйте — полностью на устройстве.</string>
+    <string name="home_on_device">На устройстве</string>
+    <string name="home_hero_cta">Начать</string>
     <string name="home_section_essentials">Основное</string>
     <string name="home_section_edit">Редактирование</string>
     <string name="nav_home">Главная</string>
@@ -121,7 +123,7 @@
     <string name="theme_system">Система</string>
     <string name="theme_light">Светлая</string>
     <string name="theme_dark">Тёмная</string>
-    <string name="language_system">System default</string>
+    <string name="language_system">Системный</string>
     <string name="language_en">English</string>
     <string name="language_es">Español</string>
     <string name="language_zh">中文</string>
@@ -152,4 +154,10 @@
     <string name="language_hu">Magyar</string>
     <string name="language_he">עברית</string>
     <string name="language_ur">اردو</string>
+    <string name="error_process_failed">Обработка не удалась. Попробуйте другое видео.</string>
+    <string name="error_read_video">Не удалось прочитать это видео. Попробуйте другой файл.</string>
+    <string name="error_no_audio">В этом видео нет звуковой дорожки.</string>
+    <string name="error_ffmpeg_load">Не удалось загрузить FFmpeg. Переустановите приложение на устройстве arm64.</string>
+    <string name="error_select_video">Сначала выберите видео.</string>
+    <string name="error_empty_file">Выбранный файл пуст или не читается.</string>
 </resources>

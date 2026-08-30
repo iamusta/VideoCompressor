@@ -1,5 +1,6 @@
 package com.videocompress.feature.editor
 
+import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,7 +12,9 @@ import com.videocompress.core.domain.model.VideoMedia
 import com.videocompress.core.domain.usecase.ObserveSettingsUseCase
 import com.videocompress.core.domain.usecase.ProcessVideosUseCase
 import com.videocompress.core.domain.usecase.ResolveVideoUseCase
+import com.videocompress.core.resources.R
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -33,6 +36,7 @@ data class EditorUiState(
 
 @HiltViewModel
 class EditorViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val resolveVideo: ResolveVideoUseCase,
     private val processVideos: ProcessVideosUseCase,
     private val observeSettings: ObserveSettingsUseCase,
@@ -88,7 +92,7 @@ class EditorViewModel @Inject constructor(
                     )
                 }
             }.onFailure { error ->
-                _state.update { it.copy(isResolving = false, errorMessage = error.message) }
+                _state.update { it.copy(isResolving = false, errorMessage = friendlyError(error)) }
             }
         }
     }
@@ -117,7 +121,7 @@ class EditorViewModel @Inject constructor(
                         it.copy(
                             isProcessing = false,
                             progress = null,
-                            errorMessage = error.message?.takeIf { msg -> msg.isNotBlank() } ?: "Processing failed. Try another video.",
+                            errorMessage = friendlyError(error),
                         )
                     }
                 }
@@ -126,10 +130,29 @@ class EditorViewModel @Inject constructor(
                     it.copy(
                         isProcessing = false,
                         progress = null,
-                        errorMessage = error.message?.takeIf { msg -> msg.isNotBlank() } ?: "Processing failed. Try another video.",
+                        errorMessage = friendlyError(error),
                     )
                 }
             }
+        }
+    }
+
+    private fun friendlyError(error: Throwable): String {
+        val raw = sequenceOf(error.message, error.cause?.message)
+            .filterNotNull()
+            .firstOrNull()
+            .orEmpty()
+        val lower = raw.lowercase()
+        return when {
+            "no audio" in lower -> context.getString(R.string.error_no_audio)
+            "failed to load" in lower || "unsatisfiedlink" in lower || "ffmpegkit" in lower ->
+                context.getString(R.string.error_ffmpeg_load)
+            "could not read" in lower || "unable to read" in lower ->
+                context.getString(R.string.error_read_video)
+            "select a video" in lower -> context.getString(R.string.error_select_video)
+            "empty or unreadable" in lower -> context.getString(R.string.error_empty_file)
+            raw.isBlank() -> context.getString(R.string.error_process_failed)
+            else -> raw.take(400)
         }
     }
 

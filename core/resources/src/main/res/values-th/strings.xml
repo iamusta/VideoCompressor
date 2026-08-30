@@ -3,8 +3,10 @@
     <string name="app_name">บีบอัดวิดีโอ</string>
     <string name="intent_open_with">เปิดด้วยบีบอัดวิดีโอ</string>
     <string name="intent_share_to">บีบอัดวิดีโอ</string>
-    <string name="home_title">เครื่องมือวิดีโอ</string>
+    <string name="home_title">ต้องการทำอะไร?</string>
     <string name="home_subtitle">บีบอัด แปลง และตัดต่อ — ทำบนเครื่อง 100%</string>
+    <string name="home_on_device">บนเครื่อง</string>
+    <string name="home_hero_cta">เริ่ม</string>
     <string name="home_section_essentials">พื้นฐาน</string>
     <string name="home_section_edit">แก้ไขและอื่น ๆ</string>
     <string name="nav_home">หน้าแรก</string>
@@ -121,7 +123,7 @@
     <string name="theme_system">ระบบ</string>
     <string name="theme_light">สว่าง</string>
     <string name="theme_dark">มืด</string>
-    <string name="language_system">System default</string>
+    <string name="language_system">ค่าเริ่มต้นของระบบ</string>
     <string name="language_en">English</string>
     <string name="language_es">Español</string>
     <string name="language_zh">中文</string>
@@ -152,4 +154,10 @@
     <string name="language_hu">Magyar</string>
     <string name="language_he">עברית</string>
     <string name="language_ur">اردو</string>
+    <string name="error_process_failed">ประมวลผลไม่สำเร็จ ลองวิดีโออื่น</string>
+    <string name="error_read_video">อ่านวิดีโอนี้ไม่ได้ ลองไฟล์อื่น</string>
+    <string name="error_no_audio">วิดีโอนี้ไม่มีแทร็กเสียง</string>
+    <string name="error_ffmpeg_load">โหลด FFmpeg ไม่ได้ ติดตั้งแอปใหม่บนเครื่อง arm64</string>
+    <string name="error_select_video">เลือกวิดีโอก่อน</string>
+    <string name="error_empty_file">ไฟล์ที่เลือกว่างหรืออ่านไม่ได้</string>
 </resources>

@@ -123,7 +123,7 @@
     <string name="theme_system">Sistem</string>
     <string name="theme_light">Açık</string>
     <string name="theme_dark">Koyu</string>
-    <string name="language_system">System default</string>
+    <string name="language_system">Sistem varsayılanı</string>
     <string name="language_en">English</string>
     <string name="language_es">Español</string>
     <string name="language_zh">中文</string>
@@ -154,4 +154,11 @@
     <string name="language_hu">Magyar</string>
     <string name="language_he">עברית</string>
     <string name="language_ur">اردو</string>
+
+    <string name="error_process_failed">İşlem başarısız. Başka bir video dene.</string>
+    <string name="error_read_video">Bu video okunamadı. Başka bir dosya dene.</string>
+    <string name="error_no_audio">Bu videoda ses yok.</string>
+    <string name="error_ffmpeg_load">FFmpeg yüklenemedi. Uygulamayı arm64 bir cihaza yeniden kur.</string>
+    <string name="error_select_video">Önce bir video seç.</string>
+    <string name="error_empty_file">Seçilen dosya boş veya okunamıyor.</string>
 </resources>

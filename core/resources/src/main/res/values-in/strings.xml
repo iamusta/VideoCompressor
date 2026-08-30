@@ -3,8 +3,10 @@
     <string name="app_name">Kompresor Video</string>
     <string name="intent_open_with">Buka dengan Kompresor Video</string>
     <string name="intent_share_to">Kompresor Video</string>
-    <string name="home_title">Alat video</string>
+    <string name="home_title">Mau ngapain?</string>
     <string name="home_subtitle">Kompres, konversi, dan edit — 100% di perangkat.</string>
+    <string name="home_on_device">Di perangkat</string>
+    <string name="home_hero_cta">Mulai</string>
     <string name="home_section_essentials">Utama</string>
     <string name="home_section_edit">Edit &amp; lainnya</string>
     <string name="nav_home">Beranda</string>
@@ -121,7 +123,7 @@
     <string name="theme_system">Sistem</string>
     <string name="theme_light">Terang</string>
     <string name="theme_dark">Gelap</string>
-    <string name="language_system">System default</string>
+    <string name="language_system">Default sistem</string>
     <string name="language_en">English</string>
     <string name="language_es">Español</string>
     <string name="language_zh">中文</string>
@@ -152,4 +154,10 @@
     <string name="language_hu">Magyar</string>
     <string name="language_he">עברית</string>
     <string name="language_ur">اردو</string>
+    <string name="error_process_failed">Pemrosesan gagal. Coba video lain.</string>
+    <string name="error_read_video">Video ini tidak dapat dibaca. Coba file lain.</string>
+    <string name="error_no_audio">Video ini tidak punya trek audio.</string>
+    <string name="error_ffmpeg_load">FFmpeg gagal dimuat. Instal ulang aplikasi di perangkat arm64.</string>
+    <string name="error_select_video">Pilih video terlebih dahulu.</string>
+    <string name="error_empty_file">File yang dipilih kosong atau tidak dapat dibaca.</string>
 </resources>

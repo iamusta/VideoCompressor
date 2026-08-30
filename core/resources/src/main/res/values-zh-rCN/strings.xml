@@ -3,8 +3,10 @@
     <string name="app_name">视频压缩</string>
     <string name="intent_open_with">用视频压缩打开</string>
     <string name="intent_share_to">视频压缩</string>
-    <string name="home_title">视频工具</string>
+    <string name="home_title">你想做什么？</string>
     <string name="home_subtitle">压缩、转换和编辑 — 100% 在本机完成。</string>
+    <string name="home_on_device">本机处理</string>
+    <string name="home_hero_cta">开始</string>
     <string name="home_section_essentials">常用</string>
     <string name="home_section_edit">编辑与更多</string>
     <string name="nav_home">首页</string>
@@ -121,7 +123,7 @@
     <string name="theme_system">系统</string>
     <string name="theme_light">浅色</string>
     <string name="theme_dark">深色</string>
-    <string name="language_system">System default</string>
+    <string name="language_system">系统默认</string>
     <string name="language_en">English</string>
     <string name="language_es">Español</string>
     <string name="language_zh">中文</string>
@@ -152,4 +154,10 @@
     <string name="language_hu">Magyar</string>
     <string name="language_he">עברית</string>
     <string name="language_ur">اردو</string>
+    <string name="error_process_failed">处理失败。请换一个视频试试。</string>
+    <string name="error_read_video">无法读取此视频。请换一个文件。</string>
+    <string name="error_no_audio">此视频没有音轨。</string>
+    <string name="error_ffmpeg_load">无法加载 FFmpeg。请在 arm64 设备上重新安装应用。</string>
+    <string name="error_select_video">请先选择视频。</string>
+    <string name="error_empty_file">所选文件为空或无法读取。</string>
 </resources>

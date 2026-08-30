@@ -3,8 +3,10 @@
     <string name="app_name">Video Compressor</string>
     <string name="intent_open_with">Ouvrir avec Video Compressor</string>
     <string name="intent_share_to">Video Compressor</string>
-    <string name="home_title">Outils vidéo</string>
+    <string name="home_title">Que veux-tu faire ?</string>
     <string name="home_subtitle">Compressez, convertissez et modifiez — 100 % sur l’appareil.</string>
+    <string name="home_on_device">Sur l’appareil</string>
+    <string name="home_hero_cta">Commencer</string>
     <string name="home_section_essentials">Essentiels</string>
     <string name="home_section_edit">Éditer et plus</string>
     <string name="nav_home">Accueil</string>
@@ -121,7 +123,7 @@
     <string name="theme_system">Système</string>
     <string name="theme_light">Clair</string>
     <string name="theme_dark">Sombre</string>
-    <string name="language_system">System default</string>
+    <string name="language_system">Par défaut du système</string>
     <string name="language_en">English</string>
     <string name="language_es">Español</string>
     <string name="language_zh">中文</string>
@@ -152,4 +154,10 @@
     <string name="language_hu">Magyar</string>
     <string name="language_he">עברית</string>
     <string name="language_ur">اردو</string>
+    <string name="error_process_failed">Échec du traitement. Essayez une autre vidéo.</string>
+    <string name="error_read_video">Impossible de lire cette vidéo. Essayez un autre fichier.</string>
+    <string name="error_no_audio">Cette vidéo n’a pas de piste audio.</string>
+    <string name="error_ffmpeg_load">Impossible de charger FFmpeg. Réinstallez l’app sur un appareil arm64.</string>
+    <string name="error_select_video">Sélectionnez d’abord une vidéo.</string>
+    <string name="error_empty_file">Le fichier sélectionné est vide ou illisible.</string>
 </resources>

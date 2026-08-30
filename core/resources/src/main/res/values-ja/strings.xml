@@ -3,8 +3,10 @@
     <string name="app_name">ビデオ圧縮</string>
     <string name="intent_open_with">ビデオ圧縮で開く</string>
     <string name="intent_share_to">ビデオ圧縮</string>
-    <string name="home_title">ビデオツール</string>
+    <string name="home_title">何をしますか？</string>
     <string name="home_subtitle">圧縮・変換・編集 — すべて端末内で完結。</string>
+    <string name="home_on_device">端末内</string>
+    <string name="home_hero_cta">開始</string>
     <string name="home_section_essentials">基本</string>
     <string name="home_section_edit">編集とその他</string>
     <string name="nav_home">ホーム</string>
@@ -121,7 +123,7 @@
     <string name="theme_system">システム</string>
     <string name="theme_light">ライト</string>
     <string name="theme_dark">ダーク</string>
-    <string name="language_system">System default</string>
+    <string name="language_system">システム既定</string>
     <string name="language_en">English</string>
     <string name="language_es">Español</string>
     <string name="language_zh">中文</string>
@@ -152,4 +154,10 @@
     <string name="language_hu">Magyar</string>
     <string name="language_he">עברית</string>
     <string name="language_ur">اردو</string>
+    <string name="error_process_failed">処理に失敗しました。別の動画を試してください。</string>
+    <string name="error_read_video">この動画を読み込めません。別のファイルを試してください。</string>
+    <string name="error_no_audio">この動画には音声トラックがありません。</string>
+    <string name="error_ffmpeg_load">FFmpegを読み込めません。arm64端末に再インストールしてください。</string>
+    <string name="error_select_video">先に動画を選択してください。</string>
+    <string name="error_empty_file">選択したファイルは空か読み取れません。</string>
 </resources>

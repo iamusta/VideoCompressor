@@ -3,8 +3,10 @@
     <string name="app_name">Video Compressor</string>
     <string name="intent_open_with">Otevřít ve Video Compressor</string>
     <string name="intent_share_to">Video Compressor</string>
-    <string name="home_title">Nástroje pro video</string>
+    <string name="home_title">Co chcete udělat?</string>
     <string name="home_subtitle">Komprimujte, převádějte a upravujte — 100% v zařízení.</string>
+    <string name="home_on_device">V zařízení</string>
+    <string name="home_hero_cta">Start</string>
     <string name="home_section_essentials">Základ</string>
     <string name="home_section_edit">Úpravy a další</string>
     <string name="nav_home">Domů</string>
@@ -121,7 +123,7 @@
     <string name="theme_system">Systém</string>
     <string name="theme_light">Světlý</string>
     <string name="theme_dark">Tmavý</string>
-    <string name="language_system">System default</string>
+    <string name="language_system">Výchozí systému</string>
     <string name="language_en">English</string>
     <string name="language_es">Español</string>
     <string name="language_zh">中文</string>
@@ -152,4 +154,10 @@
     <string name="language_hu">Magyar</string>
     <string name="language_he">עברית</string>
     <string name="language_ur">اردو</string>
+    <string name="error_process_failed">Zpracování selhalo. Zkuste jiné video.</string>
+    <string name="error_read_video">Video se nepodařilo načíst. Zkuste jiný soubor.</string>
+    <string name="error_no_audio">Toto video nemá zvukovou stopu.</string>
+    <string name="error_ffmpeg_load">FFmpeg se nenačetl. Přeinstalujte aplikaci na zařízení arm64.</string>
+    <string name="error_select_video">Nejprve vyberte video.</string>
+    <string name="error_empty_file">Vybraný soubor je prázdný nebo nečitelný.</string>
 </resources>

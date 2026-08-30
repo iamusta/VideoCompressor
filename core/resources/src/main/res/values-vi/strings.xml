@@ -3,8 +3,10 @@
     <string name="app_name">Trình nén video</string>
     <string name="intent_open_with">Mở bằng Trình nén video</string>
     <string name="intent_share_to">Trình nén video</string>
-    <string name="home_title">Công cụ video</string>
+    <string name="home_title">Bạn muốn làm gì?</string>
     <string name="home_subtitle">Nén, chuyển đổi và chỉnh sửa — 100% trên thiết bị.</string>
+    <string name="home_on_device">Trên thiết bị</string>
+    <string name="home_hero_cta">Bắt đầu</string>
     <string name="home_section_essentials">Cơ bản</string>
     <string name="home_section_edit">Chỉnh sửa &amp; thêm</string>
     <string name="nav_home">Trang chủ</string>
@@ -121,7 +123,7 @@
     <string name="theme_system">Hệ thống</string>
     <string name="theme_light">Sáng</string>
     <string name="theme_dark">Tối</string>
-    <string name="language_system">System default</string>
+    <string name="language_system">Mặc định hệ thống</string>
     <string name="language_en">English</string>
     <string name="language_es">Español</string>
     <string name="language_zh">中文</string>
@@ -152,4 +154,10 @@
     <string name="language_hu">Magyar</string>
     <string name="language_he">עברית</string>
     <string name="language_ur">اردو</string>
+    <string name="error_process_failed">Xử lý thất bại. Hãy thử video khác.</string>
+    <string name="error_read_video">Không đọc được video này. Hãy thử tệp khác.</string>
+    <string name="error_no_audio">Video này không có bản âm thanh.</string>
+    <string name="error_ffmpeg_load">Không tải được FFmpeg. Cài lại ứng dụng trên thiết bị arm64.</string>
+    <string name="error_select_video">Hãy chọn video trước.</string>
+    <string name="error_empty_file">Tệp đã chọn trống hoặc không đọc được.</string>
 </resources>

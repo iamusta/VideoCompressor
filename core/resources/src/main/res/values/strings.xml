@@ -163,4 +163,11 @@
     <string name="language_hu">Magyar</string>
     <string name="language_he">עברית</string>
     <string name="language_ur">اردو</string>
+
+    <string name="error_process_failed">Processing failed. Try another video.</string>
+    <string name="error_read_video">Could not read this video. Try another file.</string>
+    <string name="error_no_audio">This video has no audio track.</string>
+    <string name="error_ffmpeg_load">FFmpeg failed to load. Reinstall the app on an arm64 device.</string>
+    <string name="error_select_video">Select a video first.</string>
+    <string name="error_empty_file">Selected file is empty or unreadable.</string>
 </resources>

@@ -3,8 +3,10 @@
     <string name="app_name">דוחס וידאו</string>
     <string name="intent_open_with">פתיחה בדוחס וידאו</string>
     <string name="intent_share_to">דוחס וידאו</string>
-    <string name="home_title">כלי וידאו</string>
+    <string name="home_title">מה תרצה לעשות?</string>
     <string name="home_subtitle">דחיסה, המרה ועריכה — הכל במכשיר.</string>
+    <string name="home_on_device">במכשיר</string>
+    <string name="home_hero_cta">התחל</string>
     <string name="home_section_essentials">עיקרי</string>
     <string name="home_section_edit">עריכה ועוד</string>
     <string name="nav_home">בית</string>
@@ -121,7 +123,7 @@
     <string name="theme_system">מערכת</string>
     <string name="theme_light">בהיר</string>
     <string name="theme_dark">כהה</string>
-    <string name="language_system">System default</string>
+    <string name="language_system">ברירת מחדל של המערכת</string>
     <string name="language_en">English</string>
     <string name="language_es">Español</string>
     <string name="language_zh">中文</string>
@@ -152,4 +154,10 @@
     <string name="language_hu">Magyar</string>
     <string name="language_he">עברית</string>
     <string name="language_ur">اردو</string>
+    <string name="error_process_failed">העיבוד נכשל. נסה סרטון אחר.</string>
+    <string name="error_read_video">לא ניתן לקרוא את הסרטון. נסה קובץ אחר.</string>
+    <string name="error_no_audio">לסרטון הזה אין רצועת שמע.</string>
+    <string name="error_ffmpeg_load">טעינת FFmpeg נכשלה. התקן מחדש במכשיר arm64.</string>
+    <string name="error_select_video">בחר קודם סרטון.</string>
+    <string name="error_empty_file">הקובץ שנבחר ריק או לא ניתן לקריאה.</string>
 </resources>

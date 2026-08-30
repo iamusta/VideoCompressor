@@ -3,8 +3,10 @@
     <string name="app_name">ضاغط الفيديو</string>
     <string name="intent_open_with">فتح باستخدام ضاغط الفيديو</string>
     <string name="intent_share_to">ضاغط الفيديو</string>
-    <string name="home_title">أدوات الفيديو</string>
+    <string name="home_title">ماذا تريد أن تفعل؟</string>
     <string name="home_subtitle">اضغط وحوّل وعدّل — بالكامل على جهازك.</string>
+    <string name="home_on_device">على الجهاز</string>
+    <string name="home_hero_cta">ابدأ</string>
     <string name="home_section_essentials">الأساسيات</string>
     <string name="home_section_edit">تحرير والمزيد</string>
     <string name="nav_home">الرئيسية</string>
@@ -121,7 +123,7 @@
     <string name="theme_system">النظام</string>
     <string name="theme_light">فاتح</string>
     <string name="theme_dark">داكن</string>
-    <string name="language_system">System default</string>
+    <string name="language_system">افتراضي النظام</string>
     <string name="language_en">English</string>
     <string name="language_es">Español</string>
     <string name="language_zh">中文</string>
@@ -152,4 +154,10 @@
     <string name="language_hu">Magyar</string>
     <string name="language_he">עברית</string>
     <string name="language_ur">اردو</string>
+    <string name="error_process_failed">فشلت المعالجة. جرّب فيديو آخر.</string>
+    <string name="error_read_video">تعذّر قراءة هذا الفيديو. جرّب ملفًا آخر.</string>
+    <string name="error_no_audio">هذا الفيديو بلا مسار صوتي.</string>
+    <string name="error_ffmpeg_load">تعذّر تحميل FFmpeg. أعد تثبيت التطبيق على جهاز arm64.</string>
+    <string name="error_select_video">اختر فيديو أولًا.</string>
+    <string name="error_empty_file">الملف المحدد فارغ أو غير قابل للقراءة.</string>
 </resources>

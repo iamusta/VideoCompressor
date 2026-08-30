@@ -3,8 +3,10 @@
     <string name="app_name">فشرده‌ساز ویدیو</string>
     <string name="intent_open_with">باز کردن با فشرده‌ساز ویدیو</string>
     <string name="intent_share_to">فشرده‌ساز ویدیو</string>
-    <string name="home_title">ابزارهای ویدیو</string>
+    <string name="home_title">می‌خواهی چه کار کنی؟</string>
     <string name="home_subtitle">فشرده کنید، تبدیل کنید و ویرایش کنید — کاملاً روی دستگاه.</string>
+    <string name="home_on_device">روی دستگاه</string>
+    <string name="home_hero_cta">شروع</string>
     <string name="home_section_essentials">اصلی</string>
     <string name="home_section_edit">ویرایش و بیشتر</string>
     <string name="nav_home">خانه</string>
@@ -121,7 +123,7 @@
     <string name="theme_system">سیستم</string>
     <string name="theme_light">روشن</string>
     <string name="theme_dark">تیره</string>
-    <string name="language_system">System default</string>
+    <string name="language_system">پیش‌فرض سیستم</string>
     <string name="language_en">English</string>
     <string name="language_es">Español</string>
     <string name="language_zh">中文</string>
@@ -152,4 +154,10 @@
     <string name="language_hu">Magyar</string>
     <string name="language_he">עברית</string>
     <string name="language_ur">اردو</string>
+    <string name="error_process_failed">پردازش ناموفق بود. ویدیوی دیگری امتحان کنید.</string>
+    <string name="error_read_video">این ویدیو خوانده نشد. فایل دیگری امتحان کنید.</string>
+    <string name="error_no_audio">این ویدیو نوار صوتی ندارد.</string>
+    <string name="error_ffmpeg_load">FFmpeg بارگذاری نشد. برنامه را روی دستگاه arm64 دوباره نصب کنید.</string>
+    <string name="error_select_video">ابتدا یک ویدیو انتخاب کنید.</string>
+    <string name="error_empty_file">فایل انتخاب‌شده خالی یا ناخواناست.</string>
 </resources>

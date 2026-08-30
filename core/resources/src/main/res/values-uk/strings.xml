@@ -3,8 +3,10 @@
     <string name="app_name">Video Compressor</string>
     <string name="intent_open_with">Відкрити у Video Compressor</string>
     <string name="intent_share_to">Video Compressor</string>
-    <string name="home_title">Інструменти відео</string>
+    <string name="home_title">Що хочете зробити?</string>
     <string name="home_subtitle">Стискайте, конвертуйте й редагуйте — повністю на пристрої.</string>
+    <string name="home_on_device">На пристрої</string>
+    <string name="home_hero_cta">Почати</string>
     <string name="home_section_essentials">Основне</string>
     <string name="home_section_edit">Редагування</string>
     <string name="nav_home">Головна</string>
@@ -121,7 +123,7 @@
     <string name="theme_system">Система</string>
     <string name="theme_light">Світла</string>
     <string name="theme_dark">Темна</string>
-    <string name="language_system">System default</string>
+    <string name="language_system">Системна</string>
     <string name="language_en">English</string>
     <string name="language_es">Español</string>
     <string name="language_zh">中文</string>
@@ -152,4 +154,10 @@
     <string name="language_hu">Magyar</string>
     <string name="language_he">עברית</string>
     <string name="language_ur">اردو</string>
+    <string name="error_process_failed">Обробка не вдалася. Спробуйте інше відео.</string>
+    <string name="error_read_video">Не вдалося прочитати це відео. Спробуйте інший файл.</string>
+    <string name="error_no_audio">У цьому відео немає звукової доріжки.</string>
+    <string name="error_ffmpeg_load">Не вдалося завантажити FFmpeg. Перевстановіть застосунок на пристрої arm64.</string>
+    <string name="error_select_video">Спочатку виберіть відео.</string>
+    <string name="error_empty_file">Вибраний файл порожній або нечитабельний.</string>
 </resources>

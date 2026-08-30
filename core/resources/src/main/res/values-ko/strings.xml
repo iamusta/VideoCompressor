@@ -3,8 +3,10 @@
     <string name="app_name">비디오 압축</string>
     <string name="intent_open_with">비디오 압축으로 열기</string>
     <string name="intent_share_to">비디오 압축</string>
-    <string name="home_title">비디오 도구</string>
+    <string name="home_title">무엇을 할까요?</string>
     <string name="home_subtitle">압축, 변환, 편집 — 100% 기기에서 처리.</string>
+    <string name="home_on_device">기기에서</string>
+    <string name="home_hero_cta">시작</string>
     <string name="home_section_essentials">기본</string>
     <string name="home_section_edit">편집 및 더보기</string>
     <string name="nav_home">홈</string>
@@ -121,7 +123,7 @@
     <string name="theme_system">시스템</string>
     <string name="theme_light">라이트</string>
     <string name="theme_dark">다크</string>
-    <string name="language_system">System default</string>
+    <string name="language_system">시스템 기본값</string>
     <string name="language_en">English</string>
     <string name="language_es">Español</string>
     <string name="language_zh">中文</string>
@@ -152,4 +154,10 @@
     <string name="language_hu">Magyar</string>
     <string name="language_he">עברית</string>
     <string name="language_ur">اردو</string>
+    <string name="error_process_failed">처리에 실패했습니다. 다른 영상을 시도하세요.</string>
+    <string name="error_read_video">이 영상을 읽을 수 없습니다. 다른 파일을 시도하세요.</string>
+    <string name="error_no_audio">이 영상에는 오디오 트랙이 없습니다.</string>
+    <string name="error_ffmpeg_load">FFmpeg를 불러오지 못했습니다. arm64 기기에 앱을 다시 설치하세요.</string>
+    <string name="error_select_video">먼저 영상을 선택하세요.</string>
+    <string name="error_empty_file">선택한 파일이 비어 있거나 읽을 수 없습니다.</string>
 </resources>

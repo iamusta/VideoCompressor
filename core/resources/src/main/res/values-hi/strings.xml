@@ -3,8 +3,10 @@
     <string name="app_name">वीडियो कंप्रेसर</string>
     <string name="intent_open_with">वीडियो कंप्रेसर से खोलें</string>
     <string name="intent_share_to">वीडियो कंप्रेसर</string>
-    <string name="home_title">वीडियो टूल</string>
+    <string name="home_title">आप क्या करना चाहते हैं?</string>
     <string name="home_subtitle">कंप्रेस, कनवर्ट और एडिट — पूरी तरह आपके डिवाइस पर।</string>
+    <string name="home_on_device">डिवाइस पर</string>
+    <string name="home_hero_cta">शुरू करें</string>
     <string name="home_section_essentials">ज़रूरी</string>
     <string name="home_section_edit">एडिट और अधिक</string>
     <string name="nav_home">होम</string>
@@ -121,7 +123,7 @@
     <string name="theme_system">सिस्टम</string>
     <string name="theme_light">हल्का</string>
     <string name="theme_dark">गहरा</string>
-    <string name="language_system">System default</string>
+    <string name="language_system">सिस्टम डिफ़ॉल्ट</string>
     <string name="language_en">English</string>
     <string name="language_es">Español</string>
     <string name="language_zh">中文</string>
@@ -152,4 +154,10 @@
     <string name="language_hu">Magyar</string>
     <string name="language_he">עברית</string>
     <string name="language_ur">اردو</string>
+    <string name="error_process_failed">प्रोसेसिंग असफल रही। कोई और वीडियो आज़माएँ।</string>
+    <string name="error_read_video">यह वीडियो पढ़ा नहीं जा सका। कोई और फ़ाइल आज़माएँ।</string>
+    <string name="error_no_audio">इस वीडियो में ऑडियो ट्रैक नहीं है।</string>
+    <string name="error_ffmpeg_load">FFmpeg लोड नहीं हुआ। ऐप को arm64 डिवाइस पर फिर से इंस्टॉल करें।</string>
+    <string name="error_select_video">पहले एक वीडियो चुनें।</string>
+    <string name="error_empty_file">चुनी गई फ़ाइल खाली है या पढ़ी नहीं जा सकती।</string>
 </resources>

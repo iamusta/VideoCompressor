@@ -3,8 +3,10 @@
     <string name="app_name">Video Compressor</string>
     <string name="intent_open_with">Deschide cu Video Compressor</string>
     <string name="intent_share_to">Video Compressor</string>
-    <string name="home_title">Instrumente video</string>
+    <string name="home_title">Ce vrei să faci?</string>
     <string name="home_subtitle">Comprimă, convertește și editează — 100% pe dispozitiv.</string>
+    <string name="home_on_device">Pe dispozitiv</string>
+    <string name="home_hero_cta">Start</string>
     <string name="home_section_essentials">Esențiale</string>
     <string name="home_section_edit">Editare și altele</string>
     <string name="nav_home">Acasă</string>
@@ -121,7 +123,7 @@
     <string name="theme_system">Sistem</string>
     <string name="theme_light">Deschis</string>
     <string name="theme_dark">Întunecat</string>
-    <string name="language_system">System default</string>
+    <string name="language_system">Implicit sistem</string>
     <string name="language_en">English</string>
     <string name="language_es">Español</string>
     <string name="language_zh">中文</string>
@@ -152,4 +154,10 @@
     <string name="language_hu">Magyar</string>
     <string name="language_he">עברית</string>
     <string name="language_ur">اردو</string>
+    <string name="error_process_failed">Procesarea a eșuat. Încearcă alt video.</string>
+    <string name="error_read_video">Nu s-a putut citi acest video. Încearcă alt fișier.</string>
+    <string name="error_no_audio">Acest video nu are pistă audio.</string>
+    <string name="error_ffmpeg_load">FFmpeg nu s-a încărcat. Reinstalează aplicația pe un dispozitiv arm64.</string>
+    <string name="error_select_video">Selectează mai întâi un video.</string>
+    <string name="error_empty_file">Fișierul selectat este gol sau ilizibil.</string>
 </resources>
