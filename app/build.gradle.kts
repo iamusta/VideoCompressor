@@ -88,7 +88,7 @@ android {
             excludes += "META-INF/DEPENDENCIES"
         }
         jniLibs {
-            useLegacyPackaging = false
+            useLegacyPackaging = true
             pickFirsts += listOf("**/libc++_shared.so", "**/libavutil.so")
         }
     }

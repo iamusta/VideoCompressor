@@ -3,8 +3,10 @@
     <string name="app_name">Video Sıkıştırıcı</string>
     <string name="intent_open_with">Video Sıkıştırıcı ile aç</string>
     <string name="intent_share_to">Video Sıkıştırıcı</string>
-    <string name="home_title">Video araçları</string>
+    <string name="home_title">Ne yapmak istiyorsun?</string>
     <string name="home_subtitle">Sıkıştır, dönüştür ve düzenle — %100 cihazında.</string>
+    <string name="home_on_device">Cihazda</string>
+    <string name="home_hero_cta">Başla</string>
     <string name="home_section_essentials">Temel</string>
     <string name="home_section_edit">Düzenle ve daha fazlası</string>
     <string name="nav_home">Ana sayfa</string>

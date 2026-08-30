@@ -44,14 +44,20 @@ class EditorViewModel @Inject constructor(
     fun start(tool: VideoTool) {
         viewModelScope.launch {
             val settings = observeSettings().first()
-            _state.value = EditorUiState(
-                tool = tool,
-                options = ProcessOptions(
-                    tool = tool,
-                    quality = settings.defaultQuality,
-                    codec = settings.defaultCodec,
-                ),
-            )
+            _state.update { current ->
+                if (current.tool == tool && (current.media.isNotEmpty() || current.isProcessing)) {
+                    current
+                } else {
+                    EditorUiState(
+                        tool = tool,
+                        options = ProcessOptions(
+                            tool = tool,
+                            quality = settings.defaultQuality,
+                            codec = settings.defaultCodec,
+                        ),
+                    )
+                }
+            }
         }
     }
 
@@ -63,7 +69,11 @@ class EditorViewModel @Inject constructor(
                 uris.map { resolveVideo(it) }
             }.onSuccess { media ->
                 _state.update { current ->
-                    val merged = if (current.tool == VideoTool.MERGE || current.tool == VideoTool.COMPRESS) {
+                    val merged = if (
+                        current.tool == VideoTool.MERGE ||
+                        current.tool == VideoTool.COMPRESS ||
+                        current.tool == VideoTool.CONVERT
+                    ) {
                         (current.media + media).distinctBy { it.uri }
                     } else {
                         media.take(1)
@@ -95,14 +105,30 @@ class EditorViewModel @Inject constructor(
         val snapshot = _state.value
         if (snapshot.media.isEmpty() || snapshot.isProcessing) return
         viewModelScope.launch {
-            _state.update { it.copy(isProcessing = true, progress = ProcessProgress(0f, 1, snapshot.media.size), errorMessage = null) }
-            val result = processVideos(snapshot.media, snapshot.options) { progress ->
-                _state.update { it.copy(progress = progress) }
-            }
-            result.onSuccess { outputs ->
-                _state.update { it.copy(isProcessing = false, results = outputs, progress = null) }
-            }.onFailure { error ->
-                _state.update { it.copy(isProcessing = false, progress = null, errorMessage = error.message) }
+            _state.update { it.copy(isProcessing = true, progress = ProcessProgress(0f, 1, snapshot.media.size.coerceAtLeast(1)), errorMessage = null) }
+            try {
+                val result = processVideos(snapshot.media, snapshot.options) { progress ->
+                    _state.update { it.copy(progress = progress) }
+                }
+                result.onSuccess { outputs ->
+                    _state.update { it.copy(isProcessing = false, results = outputs, progress = null) }
+                }.onFailure { error ->
+                    _state.update {
+                        it.copy(
+                            isProcessing = false,
+                            progress = null,
+                            errorMessage = error.message?.takeIf { msg -> msg.isNotBlank() } ?: "Processing failed. Try another video.",
+                        )
+                    }
+                }
+            } catch (error: Throwable) {
+                _state.update {
+                    it.copy(
+                        isProcessing = false,
+                        progress = null,
+                        errorMessage = error.message?.takeIf { msg -> msg.isNotBlank() } ?: "Processing failed. Try another video.",
+                    )
+                }
             }
         }
     }

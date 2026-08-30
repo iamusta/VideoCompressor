@@ -37,14 +37,19 @@ class MediaStoreWriter @Inject constructor(
         val resolver = context.contentResolver
         val uri = resolver.insert(collection, values)
             ?: error("Unable to create MediaStore entry")
-        resolver.openOutputStream(uri)?.use { output ->
-            file.inputStream().use { it.copyTo(output) }
-        } ?: error("Unable to write output")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            values.clear()
-            values.put(MediaStore.MediaColumns.IS_PENDING, 0)
-            resolver.update(uri, values, null, null)
+        try {
+            resolver.openOutputStream(uri)?.use { output ->
+                file.inputStream().use { it.copyTo(output) }
+            } ?: error("Unable to write output")
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                values.clear()
+                values.put(MediaStore.MediaColumns.IS_PENDING, 0)
+                resolver.update(uri, values, null, null)
+            }
+            return uri
+        } catch (error: Throwable) {
+            runCatching { resolver.delete(uri, null, null) }
+            throw error
         }
-        return uri
     }
 }

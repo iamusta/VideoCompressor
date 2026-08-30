@@ -17,7 +17,7 @@ import kotlin.math.max
 import kotlin.math.roundToInt
 
 data class PreparedCommand(
-    val arguments: Array<String>,
+    val arguments: List<String>,
     val outputFile: File,
     val mimeType: String,
     val displayName: String,
@@ -31,15 +31,17 @@ object FfmpegCommandBuilder {
         options: ProcessOptions,
         outputDir: File,
     ): PreparedCommand {
+        require(inputs.isNotEmpty() && media.isNotEmpty()) { "Select a video first." }
         val first = media.first()
         val firstFile = inputs.first()
+        require(firstFile.exists() && firstFile.length() > 0L) { "Could not read the selected video." }
         val stamp = System.currentTimeMillis()
         return when (options.tool) {
             VideoTool.COMPRESS -> compress(firstFile, first, options, outputDir, stamp)
             VideoTool.CONVERT -> convert(firstFile, first, options, outputDir, stamp)
             VideoTool.EXTRACT_AUDIO -> extractAudio(firstFile, first, options, outputDir, stamp)
             VideoTool.VIDEO_TO_GIF -> videoToGif(firstFile, first, options, outputDir, stamp)
-            VideoTool.GIF_TO_VIDEO -> gifToVideo(firstFile, first, outputDir, stamp)
+            VideoTool.GIF_TO_VIDEO -> gifToVideo(firstFile, outputDir, stamp)
             VideoTool.CROP -> crop(firstFile, first, options, outputDir, stamp)
             VideoTool.TRIM -> trim(firstFile, first, options, outputDir, stamp)
             VideoTool.ROTATE -> rotate(firstFile, first, options, outputDir, stamp)
@@ -47,7 +49,7 @@ object FfmpegCommandBuilder {
             VideoTool.VOLUME -> volume(firstFile, first, options, outputDir, stamp)
             VideoTool.REVERSE -> reverse(firstFile, first, outputDir, stamp)
             VideoTool.LOOP -> loop(firstFile, first, options, outputDir, stamp)
-            VideoTool.MERGE -> merge(inputs, first, outputDir, stamp)
+            VideoTool.MERGE -> merge(inputs, media, outputDir, stamp)
             VideoTool.SOCIAL_RESIZE -> social(firstFile, first, options, outputDir, stamp)
         }
     }
@@ -61,18 +63,17 @@ object FfmpegCommandBuilder {
     ): PreparedCommand {
         val output = File(outputDir, "compressed_$stamp.mp4")
         val bitrate = videoBitrate(media, options)
-        val scale = scaleFilter(media, options.resolution)
-        val codec = encoder(options.codec)
-        val vf = listOfNotNull(scale).joinToString(",")
-        val args = parseFfmpegArguments(
-            buildString {
-                append("-y -i ${q(input.absolutePath)} ")
-                append("-c:v $codec -b:v ${bitrate}k -maxrate ${bitrate}k -bufsize ${bitrate * 2}k ")
-                if (vf.isNotEmpty()) append("-vf $vf ")
-                append("-c:a aac -b:a 128k -movflags +faststart ")
-                append(q(output.absolutePath))
-            },
-        )
+        val vf = listOfNotNull(scaleFilter(media, options.resolution), "format=yuv420p").joinToString(",")
+        val args = buildList {
+            addAll(inputArgs(input))
+            addAll(mapVideoOptionalAudio())
+            addAll(videoEncoder(options.codec))
+            addAll(listOf("-b:v", "${bitrate}k", "-maxrate", "${bitrate}k", "-bufsize", "${bitrate * 2}k"))
+            addAll(listOf("-vf", vf, "-pix_fmt", "yuv420p"))
+            addAll(aac())
+            addAll(faststart())
+            add(output.absolutePath)
+        }
         return PreparedCommand(args, output, "video/mp4", output.name)
     }
 
@@ -85,18 +86,36 @@ object FfmpegCommandBuilder {
     ): PreparedCommand {
         val ext = options.outputFormat.extension
         val output = File(outputDir, "converted_$stamp.$ext")
-        val args = parseFfmpegArguments(
-            when (options.outputFormat) {
-                OutputFormat.WEBM ->
-                    "-y -i ${q(input.absolutePath)} -c:v libvpx-vp9 -b:v 1M -c:a libopus ${q(output.absolutePath)}"
-                OutputFormat.AVI ->
-                    "-y -i ${q(input.absolutePath)} -c:v mpeg4 -q:v 5 -c:a libmp3lame ${q(output.absolutePath)}"
-                OutputFormat.THREE_GP ->
-                    "-y -i ${q(input.absolutePath)} -c:v libx264 -profile:v baseline -level 3.0 -c:a aac -ac 1 -ar 16000 ${q(output.absolutePath)}"
-                else ->
-                    "-y -i ${q(input.absolutePath)} -c:v libx264 -preset veryfast -crf 23 -c:a aac -movflags +faststart ${q(output.absolutePath)}"
-            },
-        )
+        val args = when (options.outputFormat) {
+            OutputFormat.WEBM -> buildList {
+                addAll(inputArgs(input))
+                addAll(mapVideoOptionalAudio())
+                addAll(listOf("-c:v", "libvpx-vp9", "-b:v", "1M", "-pix_fmt", "yuv420p", "-c:a", "libopus"))
+                add(output.absolutePath)
+            }
+            OutputFormat.AVI -> buildList {
+                addAll(inputArgs(input))
+                addAll(mapVideoOptionalAudio())
+                addAll(listOf("-c:v", "mpeg4", "-q:v", "5", "-pix_fmt", "yuv420p"))
+                addAll(aac())
+                add(output.absolutePath)
+            }
+            OutputFormat.THREE_GP -> buildList {
+                addAll(inputArgs(input))
+                addAll(mapVideoOptionalAudio())
+                addAll(listOf("-c:v", "libx264", "-preset", "veryfast", "-profile:v", "baseline", "-pix_fmt", "yuv420p"))
+                addAll(listOf("-c:a", "aac", "-ac", "1", "-ar", "16000"))
+                add(output.absolutePath)
+            }
+            else -> buildList {
+                addAll(inputArgs(input))
+                addAll(mapVideoOptionalAudio())
+                addAll(h264())
+                addAll(aac())
+                addAll(faststart())
+                add(output.absolutePath)
+            }
+        }
         return PreparedCommand(args, output, options.outputFormat.mime, output.name)
     }
 
@@ -107,16 +126,22 @@ object FfmpegCommandBuilder {
         outputDir: File,
         stamp: Long,
     ): PreparedCommand {
+        if (!media.hasAudio) {
+            error("This video has no audio track.")
+        }
         val ext = options.audioFormat.extension
         val output = File(outputDir, "${baseName(media)}_audio_$stamp.$ext")
-        val args = parseFfmpegArguments(
-            when (options.audioFormat) {
-                AudioFormat.MP3 -> "-y -i ${q(input.absolutePath)} -vn -acodec libmp3lame -q:a 2 ${q(output.absolutePath)}"
-                AudioFormat.WAV -> "-y -i ${q(input.absolutePath)} -vn -acodec pcm_s16le ${q(output.absolutePath)}"
-                AudioFormat.AAC, AudioFormat.M4A ->
-                    "-y -i ${q(input.absolutePath)} -vn -c:a aac -b:a 192k ${q(output.absolutePath)}"
-            },
-        )
+        val encode = when (options.audioFormat) {
+            AudioFormat.MP3 -> listOf("-c:a", "libmp3lame", "-q:a", "2")
+            AudioFormat.WAV -> listOf("-c:a", "pcm_s16le")
+            AudioFormat.AAC, AudioFormat.M4A -> listOf("-c:a", "aac", "-b:a", "192k")
+        }
+        val args = buildList {
+            addAll(inputArgs(input))
+            addAll(listOf("-vn", "-map", "0:a:0"))
+            addAll(encode)
+            add(output.absolutePath)
+        }
         return PreparedCommand(args, output, options.audioFormat.mime, output.name)
     }
 
@@ -129,27 +154,24 @@ object FfmpegCommandBuilder {
     ): PreparedCommand {
         val output = File(outputDir, "clip_$stamp.gif")
         val start = options.trimStartMs / 1000.0
-        val duration = ((options.trimEndMs ?: media.durationMs) - options.trimStartMs)
+        val duration = ((options.trimEndMs ?: media.durationMs.coerceAtLeast(1L)) - options.trimStartMs)
             .coerceAtLeast(500L) / 1000.0
-        val args = parseFfmpegArguments(
-            "-y -ss $start -t $duration -i ${q(input.absolutePath)} " +
-                "-vf fps=${options.gifFps},scale=${options.gifWidth}:-1:flags=lanczos " +
-                "-loop 0 ${q(output.absolutePath)}",
-        )
+        val args = buildList {
+            addAll(listOf("-y", "-hide_banner", "-ss", start.toString(), "-t", duration.toString(), "-i", input.absolutePath))
+            addAll(listOf("-vf", "fps=${options.gifFps},scale=${options.gifWidth}:-1:flags=lanczos", "-loop", "0"))
+            add(output.absolutePath)
+        }
         return PreparedCommand(args, output, "image/gif", output.name)
     }
 
-    private fun gifToVideo(
-        input: File,
-        media: VideoMedia,
-        outputDir: File,
-        stamp: Long,
-    ): PreparedCommand {
+    private fun gifToVideo(input: File, outputDir: File, stamp: Long): PreparedCommand {
         val output = File(outputDir, "gif_video_$stamp.mp4")
-        val args = parseFfmpegArguments(
-            "-y -i ${q(input.absolutePath)} -movflags +faststart -pix_fmt yuv420p " +
-                "-c:v libx264 -preset veryfast ${q(output.absolutePath)}",
-        )
+        val args = buildList {
+            addAll(inputArgs(input))
+            addAll(h264())
+            addAll(faststart())
+            add(output.absolutePath)
+        }
         return PreparedCommand(args, output, "video/mp4", output.name)
     }
 
@@ -161,11 +183,15 @@ object FfmpegCommandBuilder {
         stamp: Long,
     ): PreparedCommand {
         val output = File(outputDir, "cropped_$stamp.mp4")
-        val (w, h, x, y) = cropBox(media, options)
-        val args = parseFfmpegArguments(
-            "-y -i ${q(input.absolutePath)} -vf crop=$w:$h:$x:$y -c:v libx264 -preset veryfast " +
-                "-c:a copy ${q(output.absolutePath)}",
-        )
+        val box = cropBox(media, options)
+        val args = buildList {
+            addAll(inputArgs(input))
+            addAll(mapVideoOptionalAudio())
+            addAll(listOf("-vf", "crop=${box[0]}:${box[1]}:${box[2]}:${box[3]},format=yuv420p"))
+            addAll(h264())
+            addAll(aac())
+            add(output.absolutePath)
+        }
         return PreparedCommand(args, output, "video/mp4", output.name)
     }
 
@@ -178,10 +204,15 @@ object FfmpegCommandBuilder {
     ): PreparedCommand {
         val output = File(outputDir, "trimmed_$stamp.mp4")
         val start = options.trimStartMs / 1000.0
-        val end = (options.trimEndMs ?: media.durationMs) / 1000.0
-        val args = parseFfmpegArguments(
-            "-y -ss $start -to $end -i ${q(input.absolutePath)} -c copy ${q(output.absolutePath)}",
-        )
+        val end = (options.trimEndMs ?: media.durationMs.coerceAtLeast(options.trimStartMs + 500L)) / 1000.0
+        val args = buildList {
+            addAll(listOf("-y", "-hide_banner", "-ss", start.toString(), "-to", end.toString(), "-i", input.absolutePath))
+            addAll(mapVideoOptionalAudio())
+            addAll(h264())
+            addAll(aac())
+            addAll(faststart())
+            add(output.absolutePath)
+        }
         return PreparedCommand(args, output, "video/mp4", output.name)
     }
 
@@ -194,15 +225,20 @@ object FfmpegCommandBuilder {
     ): PreparedCommand {
         val output = File(outputDir, "rotated_$stamp.mp4")
         val vf = when (options.rotateAction) {
-            RotateAction.CW_90 -> "transpose=1"
-            RotateAction.CCW_90 -> "transpose=2"
-            RotateAction.ROTATE_180 -> "transpose=1,transpose=1"
-            RotateAction.FLIP_HORIZONTAL -> "hflip"
-            RotateAction.FLIP_VERTICAL -> "vflip"
+            RotateAction.CW_90 -> "transpose=1,format=yuv420p"
+            RotateAction.CCW_90 -> "transpose=2,format=yuv420p"
+            RotateAction.ROTATE_180 -> "transpose=1,transpose=1,format=yuv420p"
+            RotateAction.FLIP_HORIZONTAL -> "hflip,format=yuv420p"
+            RotateAction.FLIP_VERTICAL -> "vflip,format=yuv420p"
         }
-        val args = parseFfmpegArguments(
-            "-y -i ${q(input.absolutePath)} -vf $vf -c:v libx264 -preset veryfast -c:a copy ${q(output.absolutePath)}",
-        )
+        val args = buildList {
+            addAll(inputArgs(input))
+            addAll(mapVideoOptionalAudio())
+            addAll(listOf("-vf", vf))
+            addAll(h264())
+            addAll(aac())
+            add(output.absolutePath)
+        }
         return PreparedCommand(args, output, "video/mp4", output.name)
     }
 
@@ -216,11 +252,18 @@ object FfmpegCommandBuilder {
         val output = File(outputDir, "speed_$stamp.mp4")
         val factor = options.speed.coerceIn(0.25f, 4f)
         val videoPts = 1.0 / factor
-        val audioFilters = atempoChain(factor)
-        val args = parseFfmpegArguments(
-            "-y -i ${q(input.absolutePath)} -filter:v setpts=$videoPts*PTS " +
-                "-filter:a $audioFilters -c:v libx264 -preset veryfast ${q(output.absolutePath)}",
-        )
+        val args = buildList {
+            addAll(inputArgs(input))
+            addAll(listOf("-map", "0:v:0", "-filter:v", "setpts=${videoPts}*PTS"))
+            if (media.hasAudio) {
+                addAll(listOf("-map", "0:a:0", "-filter:a", atempoChain(factor)))
+                addAll(aac())
+            } else {
+                add("-an")
+            }
+            addAll(h264())
+            add(output.absolutePath)
+        }
         return PreparedCommand(args, output, "video/mp4", output.name)
     }
 
@@ -232,16 +275,21 @@ object FfmpegCommandBuilder {
         stamp: Long,
     ): PreparedCommand {
         val output = File(outputDir, "volume_$stamp.mp4")
-        val args = parseFfmpegArguments(
-            when {
-                options.removeAudio || options.mute ->
-                    "-y -i ${q(input.absolutePath)} -c:v copy -an ${q(output.absolutePath)}"
-                else -> {
-                    val gain = options.volumePercent / 100.0
-                    "-y -i ${q(input.absolutePath)} -c:v copy -af volume=$gain ${q(output.absolutePath)}"
-                }
-            },
-        )
+        val args = if (options.removeAudio || options.mute || !media.hasAudio) {
+            buildList {
+                addAll(inputArgs(input))
+                addAll(listOf("-map", "0:v:0", "-c:v", "copy", "-an"))
+                add(output.absolutePath)
+            }
+        } else {
+            val gain = options.volumePercent / 100.0
+            buildList {
+                addAll(inputArgs(input))
+                addAll(listOf("-map", "0:v:0", "-map", "0:a:0", "-c:v", "copy", "-af", "volume=$gain"))
+                addAll(aac())
+                add(output.absolutePath)
+            }
+        }
         return PreparedCommand(args, output, "video/mp4", output.name)
     }
 
@@ -252,9 +300,18 @@ object FfmpegCommandBuilder {
         stamp: Long,
     ): PreparedCommand {
         val output = File(outputDir, "reversed_$stamp.mp4")
-        val args = parseFfmpegArguments(
-            "-y -i ${q(input.absolutePath)} -vf reverse -af areverse -c:v libx264 -preset veryfast ${q(output.absolutePath)}",
-        )
+        val args = buildList {
+            addAll(inputArgs(input))
+            addAll(listOf("-map", "0:v:0", "-vf", "reverse,format=yuv420p"))
+            if (media.hasAudio) {
+                addAll(listOf("-map", "0:a:0", "-af", "areverse"))
+                addAll(aac())
+            } else {
+                add("-an")
+            }
+            addAll(h264())
+            add(output.absolutePath)
+        }
         return PreparedCommand(args, output, "video/mp4", output.name)
     }
 
@@ -267,24 +324,47 @@ object FfmpegCommandBuilder {
     ): PreparedCommand {
         val output = File(outputDir, "looped_$stamp.mp4")
         val repeats = (options.loopCount - 1).coerceIn(1, 19)
-        val args = parseFfmpegArguments(
-            "-y -stream_loop $repeats -i ${q(input.absolutePath)} -c copy ${q(output.absolutePath)}",
-        )
+        val args = buildList {
+            addAll(listOf("-y", "-hide_banner", "-stream_loop", repeats.toString(), "-i", input.absolutePath))
+            addAll(mapVideoOptionalAudio())
+            addAll(h264())
+            addAll(aac())
+            add(output.absolutePath)
+        }
         return PreparedCommand(args, output, "video/mp4", output.name)
     }
 
     private fun merge(
         inputs: List<File>,
-        media: VideoMedia,
+        media: List<VideoMedia>,
         outputDir: File,
         stamp: Long,
     ): PreparedCommand {
-        val listFile = File(outputDir, "concat_$stamp.txt")
-        listFile.writeText(inputs.joinToString("\n") { "file '${it.absolutePath.replace("'", "'\\''")}'" })
+        require(inputs.size >= 2) { "Select at least two videos to merge." }
         val output = File(outputDir, "merged_$stamp.mp4")
-        val args = parseFfmpegArguments(
-            "-y -f concat -safe 0 -i ${q(listFile.absolutePath)} -c copy ${q(output.absolutePath)}",
-        )
+        val count = inputs.size
+        val withAudio = media.size == inputs.size && media.all { it.hasAudio }
+        val filter = if (withAudio) {
+            (0 until count).joinToString("") { "[$it:v:0][$it:a:0]" } +
+                "concat=n=$count:v=1:a=1[v][a]"
+        } else {
+            (0 until count).joinToString("") { "[$it:v:0]" } +
+                "concat=n=$count:v=1:a=0[v]"
+        }
+        val args = buildList {
+            addAll(listOf("-y", "-hide_banner"))
+            inputs.forEach { addAll(listOf("-i", it.absolutePath)) }
+            addAll(listOf("-filter_complex", filter, "-map", "[v]"))
+            if (withAudio) {
+                addAll(listOf("-map", "[a]"))
+                addAll(aac())
+            } else {
+                add("-an")
+            }
+            addAll(h264())
+            addAll(faststart())
+            add(output.absolutePath)
+        }
         return PreparedCommand(args, output, "video/mp4", output.name)
     }
 
@@ -297,20 +377,39 @@ object FfmpegCommandBuilder {
     ): PreparedCommand {
         val (w, h) = options.socialPreset.size
         val output = File(outputDir, "${options.socialPreset.name.lowercase()}_$stamp.mp4")
-        val vf = "scale=$w:$h:force_original_aspect_ratio=decrease,pad=$w:$h:(ow-iw)/2:(oh-ih)/2"
-        val args = parseFfmpegArguments(
-            "-y -i ${q(input.absolutePath)} -vf $vf -c:v libx264 -preset veryfast -c:a aac " +
-                "-movflags +faststart ${q(output.absolutePath)}",
-        )
+        val vf = "scale=$w:$h:force_original_aspect_ratio=decrease,pad=$w:$h:(ow-iw)/2:(oh-ih)/2,format=yuv420p"
+        val args = buildList {
+            addAll(inputArgs(input))
+            addAll(mapVideoOptionalAudio())
+            addAll(listOf("-vf", vf))
+            addAll(h264())
+            addAll(aac())
+            addAll(faststart())
+            add(output.absolutePath)
+        }
         return PreparedCommand(args, output, "video/mp4", output.name)
+    }
+
+    private fun inputArgs(input: File) = listOf("-y", "-hide_banner", "-i", input.absolutePath)
+
+    private fun mapVideoOptionalAudio() = listOf("-map", "0:v:0", "-map", "0:a?")
+
+    private fun aac() = listOf("-c:a", "aac", "-b:a", "128k", "-ac", "2", "-ar", "44100")
+
+    private fun h264() = listOf("-c:v", "libx264", "-preset", "veryfast", "-pix_fmt", "yuv420p")
+
+    private fun faststart() = listOf("-movflags", "+faststart")
+
+    private fun videoEncoder(codec: VideoCodec): List<String> = when (codec) {
+        VideoCodec.H264 -> listOf("-c:v", "libx264", "-preset", "veryfast")
+        VideoCodec.H265 -> listOf("-c:v", "libx265", "-preset", "veryfast", "-tag:v", "hvc1")
     }
 
     private fun videoBitrate(media: VideoMedia, options: ProcessOptions): Int {
         options.targetSizeMb?.let { target ->
             val durationSec = max(media.durationMs / 1000.0, 1.0)
-            val audioBits = 128.0
             val totalKbit = target * 8192.0
-            return ((totalKbit / durationSec) - audioBits).toInt().coerceIn(150, 20_000)
+            return ((totalKbit / durationSec) - 128.0).toInt().coerceIn(150, 20_000)
         }
         val base = when (options.quality) {
             CompressQuality.LOW -> 600
@@ -337,11 +436,6 @@ object FfmpegCommandBuilder {
         }
         if (media.height in 1 until targetH && media.width in 1 until targetH) return null
         return "scale=-2:$targetH"
-    }
-
-    private fun encoder(codec: VideoCodec): String = when (codec) {
-        VideoCodec.H264 -> "libx264 -preset veryfast"
-        VideoCodec.H265 -> "libx265 -preset veryfast -tag:v hvc1"
     }
 
     private fun cropBox(media: VideoMedia, options: ProcessOptions): IntArray {
@@ -391,32 +485,6 @@ object FfmpegCommandBuilder {
         }
         parts += "atempo=${String.format(Locale.US, "%.3f", remaining)}"
         return parts.joinToString(",")
-    }
-
-    private fun q(path: String): String = "\"${path.replace("\"", "\\\"")}\""
-
-    private fun parseFfmpegArguments(command: String): Array<String> {
-        val tokens = mutableListOf<String>()
-        val current = StringBuilder()
-        var inQuotes = false
-        var index = 0
-        while (index < command.length) {
-            when (val char = command[index]) {
-                '"' -> inQuotes = !inQuotes
-                ' ', '\t', '\n', '\r' -> if (!inQuotes) {
-                    if (current.isNotEmpty()) {
-                        tokens += current.toString()
-                        current.clear()
-                    }
-                } else {
-                    current.append(char)
-                }
-                else -> current.append(char)
-            }
-            index++
-        }
-        if (current.isNotEmpty()) tokens += current.toString()
-        return tokens.toTypedArray()
     }
 
     private fun baseName(media: VideoMedia): String =

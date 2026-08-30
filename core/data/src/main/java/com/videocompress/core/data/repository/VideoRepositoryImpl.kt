@@ -1,6 +1,8 @@
 package com.videocompress.core.data.repository
 
+import android.content.Context
 import android.net.Uri
+import androidx.core.content.FileProvider
 import com.videocompress.core.common.VideoTool
 import com.videocompress.core.data.media.MediaStoreWriter
 import com.videocompress.core.data.media.UriFileCopier
@@ -13,7 +15,6 @@ import com.videocompress.core.domain.repository.VideoRepository
 import com.videocompress.core.video.FfmpegVideoProcessor
 import com.videocompress.core.video.ensureDir
 import dagger.hilt.android.qualifiers.ApplicationContext
-import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -39,6 +40,7 @@ class VideoRepositoryImpl @Inject constructor(
         options: ProcessOptions,
         onProgress: (ProcessProgress) -> Unit,
     ): Result<List<ProcessResult>> = withContext(Dispatchers.IO) {
+        cleanupStaleWork()
         val workDir = File(context.cacheDir, "work_${System.currentTimeMillis()}").ensureDir()
         try {
             val files = inputs.mapIndexed { index, media ->
@@ -66,7 +68,11 @@ class VideoRepositoryImpl @Inject constructor(
                 val uri = if (saveToGallery) {
                     writer.save(command.outputFile, command.displayName, command.mimeType)
                 } else {
-                    Uri.fromFile(command.outputFile)
+                    FileProvider.getUriForFile(
+                        context,
+                        "${context.packageName}.fileprovider",
+                        command.outputFile,
+                    )
                 }
                 results += ProcessResult(
                     outputUri = uri,
@@ -79,12 +85,20 @@ class VideoRepositoryImpl @Inject constructor(
                 )
             }
             Result.success(results)
-        } catch (error: Exception) {
+        } catch (error: Throwable) {
+            runCatching { workDir.deleteRecursively() }
             Result.failure(error)
         }
     }
 
     override fun cancel() {
         processor.cancel()
+    }
+
+    private fun cleanupStaleWork() {
+        val cutoff = System.currentTimeMillis() - 3_600_000L
+        context.cacheDir.listFiles()
+            ?.filter { it.isDirectory && it.name.startsWith("work_") && it.lastModified() < cutoff }
+            ?.forEach { runCatching { it.deleteRecursively() } }
     }
 }

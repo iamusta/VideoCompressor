@@ -21,6 +21,7 @@ data class VideoMedia(
     val width: Int,
     val height: Int,
     val mimeType: String,
+    val hasAudio: Boolean = true,
 )
 
 data class ProcessOptions(

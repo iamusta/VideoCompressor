@@ -20,14 +20,17 @@ import androidx.compose.ui.unit.dp
 import com.videocompress.core.common.VideoTool
 import com.videocompress.core.resources.R
 import com.videocompress.core.ui.components.FeatureGridCard
+import com.videocompress.core.ui.components.FeatureHeroCard
+import com.videocompress.core.ui.components.FeatureSpotlightCard
+import com.videocompress.core.ui.util.subtitleRes
 import com.videocompress.core.ui.util.titleRes
 import com.videocompress.core.ui.util.visual
 
-private val primaryTools = listOf(
-    VideoTool.COMPRESS,
+private val essentialTools = listOf(
     VideoTool.CONVERT,
     VideoTool.EXTRACT_AUDIO,
     VideoTool.VIDEO_TO_GIF,
+    VideoTool.MERGE,
 )
 
 private val editTools = listOf(
@@ -38,7 +41,6 @@ private val editTools = listOf(
     VideoTool.VOLUME,
     VideoTool.REVERSE,
     VideoTool.LOOP,
-    VideoTool.MERGE,
     VideoTool.SOCIAL_RESIZE,
     VideoTool.GIF_TO_VIDEO,
 )
@@ -49,66 +51,88 @@ fun HomeScreen(
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 8.dp, bottom = 28.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         item {
-            Column(modifier = Modifier.padding(bottom = 8.dp, top = 4.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 Text(
                     text = stringResource(R.string.home_title),
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.SemiBold,
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
                 )
                 Text(
                     text = stringResource(R.string.home_subtitle),
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = 6.dp),
                 )
             }
         }
         item {
-            Text(
-                text = stringResource(R.string.home_section_essentials),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.padding(top = 4.dp, bottom = 2.dp),
+            val visual = VideoTool.COMPRESS.visual()
+            FeatureHeroCard(
+                title = stringResource(VideoTool.COMPRESS.titleRes()),
+                subtitle = stringResource(VideoTool.COMPRESS.subtitleRes()),
+                action = stringResource(R.string.home_hero_cta),
+                badge = stringResource(R.string.home_on_device),
+                icon = visual.icon,
+                onClick = { onOpenTool(VideoTool.COMPRESS) },
             )
-        }
-        items(primaryTools.chunked(2)) { row ->
-            ToolRow(row, onOpenTool)
         }
         item {
-            Text(
-                text = stringResource(R.string.home_section_edit),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.padding(top = 12.dp, bottom = 2.dp),
-            )
+            SectionLabel(stringResource(R.string.home_section_essentials))
         }
-        items(editTools.chunked(2)) { row ->
-            ToolRow(row, onOpenTool)
+        items(essentialTools.chunked(2)) { row ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                row.forEach { tool ->
+                    val visual = tool.visual()
+                    FeatureSpotlightCard(
+                        title = stringResource(tool.titleRes()),
+                        subtitle = stringResource(tool.subtitleRes()),
+                        icon = visual.icon,
+                        iconTint = visual.tint,
+                        iconBackgroundColor = visual.background,
+                        onClick = { onOpenTool(tool) },
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+                if (row.size == 1) Spacer(Modifier.weight(1f))
+            }
+        }
+        item {
+            SectionLabel(stringResource(R.string.home_section_edit))
+        }
+        items(editTools.chunked(3)) { row ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                row.forEach { tool ->
+                    val visual = tool.visual()
+                    FeatureGridCard(
+                        title = stringResource(tool.titleRes()),
+                        icon = visual.icon,
+                        iconTint = visual.tint,
+                        iconBackgroundColor = visual.background,
+                        onClick = { onOpenTool(tool) },
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+                repeat(3 - row.size) { Spacer(Modifier.weight(1f)) }
+            }
         }
     }
 }
 
 @Composable
-private fun ToolRow(tools: List<VideoTool>, onOpenTool: (VideoTool) -> Unit) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        tools.forEach { tool ->
-            val visual = tool.visual()
-            FeatureGridCard(
-                title = stringResource(tool.titleRes()),
-                icon = visual.icon,
-                iconTint = visual.tint,
-                iconBackgroundColor = visual.background,
-                onClick = { onOpenTool(tool) },
-                modifier = Modifier.weight(1f),
-            )
-        }
-        if (tools.size == 1) Spacer(Modifier.weight(1f))
-    }
+private fun SectionLabel(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.titleMedium,
+        fontWeight = FontWeight.SemiBold,
+        modifier = Modifier.padding(top = 4.dp),
+    )
 }

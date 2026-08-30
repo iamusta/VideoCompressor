@@ -1,8 +1,12 @@
 package com.videocompress.app
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Home
@@ -52,6 +56,12 @@ fun VideoCompressorApp(
                 it.route == Destinations.HOME || it.route == Destinations.HISTORY || it.route == Destinations.SETTINGS
             } == true
             Scaffold(
+                contentWindowInsets = if (showBar) {
+                    WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
+                } else {
+                    WindowInsets(0, 0, 0, 0)
+                },
+                containerColor = MaterialTheme.colorScheme.background,
                 bottomBar = {
                     if (showBar) {
                         NavigationBar {

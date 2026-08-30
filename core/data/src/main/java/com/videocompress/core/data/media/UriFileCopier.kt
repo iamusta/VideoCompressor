@@ -26,6 +26,8 @@ class UriFileCopier @Inject constructor(
             val mime = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE)
                 ?: context.contentResolver.getType(uri)
                 ?: "video/mp4"
+            val audioFlag = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_AUDIO)
+            val hasAudio = !audioFlag.equals("no", ignoreCase = true)
             VideoMedia(
                 uri = uri,
                 displayName = name,
@@ -34,18 +36,25 @@ class UriFileCopier @Inject constructor(
                 width = width,
                 height = height,
                 mimeType = mime,
+                hasAudio = hasAudio,
             )
+        } catch (error: Throwable) {
+            throw IllegalStateException("Could not read this video. Try another file.", error)
         } finally {
             runCatching { retriever.release() }
         }
     }
 
     fun copyToCache(uri: Uri, directory: File, index: Int): File {
-        val ext = queryName(uri)?.substringAfterLast('.', "mp4") ?: "mp4"
+        val rawExt = queryName(uri)?.substringAfterLast('.', "mp4")?.lowercase() ?: "mp4"
+        val ext = rawExt.replace(Regex("[^a-z0-9]"), "").ifBlank { "mp4" }.take(8)
         val target = File(directory, "input_${index}_${System.nanoTime()}.$ext")
         context.contentResolver.openInputStream(uri)?.use { input ->
             target.outputStream().use { input.copyTo(it) }
         } ?: error("Unable to read selected file")
+        if (!target.exists() || target.length() == 0L) {
+            error("Selected file is empty or unreadable.")
+        }
         return target
     }
 

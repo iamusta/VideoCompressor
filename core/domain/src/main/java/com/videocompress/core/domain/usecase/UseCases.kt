@@ -29,18 +29,20 @@ class ProcessVideosUseCase @Inject constructor(
     ): Result<List<ProcessResult>> {
         val result = videoRepository.process(inputs, options, onProgress)
         result.getOrNull()?.forEach { item ->
-            historyRepository.add(
-                HistoryItem(
-                    id = 0,
-                    tool = options.tool,
-                    outputUri = item.outputUri.toString(),
-                    displayName = item.displayName,
-                    originalSizeBytes = item.originalSizeBytes,
-                    resultSizeBytes = item.sizeBytes,
-                    createdAt = System.currentTimeMillis(),
-                    mimeType = item.mimeType,
-                ),
-            )
+            runCatching {
+                historyRepository.add(
+                    HistoryItem(
+                        id = 0,
+                        tool = options.tool,
+                        outputUri = item.outputUri.toString(),
+                        displayName = item.displayName,
+                        originalSizeBytes = item.originalSizeBytes,
+                        resultSizeBytes = item.sizeBytes,
+                        createdAt = System.currentTimeMillis(),
+                        mimeType = item.mimeType,
+                    ),
+                )
+            }
         }
         return result
     }

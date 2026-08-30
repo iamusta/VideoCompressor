@@ -10,10 +10,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -142,6 +146,7 @@ fun EditorScreen(
         },
         snackbarHost = { SnackbarHost(snackbar) },
         containerColor = MaterialTheme.colorScheme.background,
+        contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom),
     ) { padding ->
         Box(modifier = Modifier
             .fillMaxSize()
@@ -162,7 +167,7 @@ fun EditorScreen(
                         icon = Icons.Outlined.VideoLibrary,
                         title = stringResource(R.string.editor_empty_title),
                         message = stringResource(R.string.editor_empty_message),
-                        modifier = Modifier.padding(top = 24.dp),
+                        modifier = Modifier.padding(top = 12.dp),
                     )
                     PrimaryButton(
                         text = stringResource(if (multiple) R.string.select_videos else R.string.select_video),

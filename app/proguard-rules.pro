@@ -4,6 +4,10 @@
 # FFmpegKit (matches AAR consumer rules + full package keep)
 -keep class com.arthenica.ffmpegkit.** { *; }
 -keep class com.arthenica.smartexception.** { *; }
+-keep class com.arthenica.** { *; }
+-keepclasseswithmembernames class com.arthenica.** {
+    native <methods>;
+}
 -dontwarn com.arthenica.**
 
 -keep class com.arthenica.ffmpegkit.FFmpegKitConfig {

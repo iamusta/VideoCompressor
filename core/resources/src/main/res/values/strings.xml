@@ -4,8 +4,10 @@
     <string name="intent_open_with">Open with Video Compressor</string>
     <string name="intent_share_to">Video Compressor</string>
 
-    <string name="home_title">Video tools</string>
+    <string name="home_title">What do you want to do?</string>
     <string name="home_subtitle">Compress, convert and edit — 100% on your device.</string>
+    <string name="home_on_device">On device</string>
+    <string name="home_hero_cta">Start</string>
     <string name="home_section_essentials">Essentials</string>
     <string name="home_section_edit">Edit &amp; more</string>
 

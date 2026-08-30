@@ -1,17 +1,30 @@
 package com.videocompress.feature.settings
 
 import android.content.Intent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
+import androidx.compose.material.icons.outlined.DarkMode
+import androidx.compose.material.icons.outlined.HighQuality
+import androidx.compose.material.icons.outlined.Language
+import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material.icons.outlined.VideoSettings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
@@ -24,9 +37,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -71,81 +87,100 @@ fun SettingsScreen(
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp),
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         item {
             Text(
                 text = stringResource(R.string.nav_settings),
-                style = MaterialTheme.typography.headlineSmall,
+                style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.padding(bottom = 16.dp),
-            )
-        }
-        item { SectionLabel(stringResource(R.string.settings_section_app)) }
-        item {
-            SettingsRow(
-                title = stringResource(R.string.settings_theme),
-                subtitle = themeLabel(settings.themeMode),
-                onClick = { showTheme = true },
+                modifier = Modifier.padding(top = 2.dp, bottom = 2.dp),
             )
         }
         item {
-            SettingsRow(
-                title = stringResource(R.string.settings_language),
-                subtitle = languageLabel(settings.languageCode),
-                onClick = { showLanguage = true },
-            )
-        }
-        item { SectionLabel(stringResource(R.string.settings_section_defaults)) }
-        item {
-            SettingsRow(
-                title = stringResource(R.string.settings_default_quality),
-                subtitle = qualityLabel(settings.defaultQuality),
-                onClick = { showQuality = true },
-            )
-        }
-        item {
-            SettingsRow(
-                title = stringResource(R.string.settings_default_codec),
-                subtitle = if (settings.defaultCodec == VideoCodec.H265) "H.265" else "H.264",
-                onClick = { showCodec = true },
-            )
-        }
-        item { SectionLabel(stringResource(R.string.settings_section_privacy)) }
-        item {
-            SwitchRow(stringResource(R.string.settings_save_to_gallery), settings.saveToGallery, onSaveGallery)
+            SettingsGroup(stringResource(R.string.settings_section_app)) {
+                SettingsNavRow(
+                    icon = Icons.Outlined.DarkMode,
+                    title = stringResource(R.string.settings_theme),
+                    value = themeLabel(settings.themeMode),
+                    onClick = { showTheme = true },
+                    showDivider = true,
+                )
+                SettingsNavRow(
+                    icon = Icons.Outlined.Language,
+                    title = stringResource(R.string.settings_language),
+                    value = languageLabel(settings.languageCode),
+                    onClick = { showLanguage = true },
+                    showDivider = false,
+                )
+            }
         }
         item {
-            SwitchRow(stringResource(R.string.settings_haptic_feedback), settings.hapticEnabled, onHaptic)
+            SettingsGroup(stringResource(R.string.settings_section_defaults)) {
+                SettingsNavRow(
+                    icon = Icons.Outlined.HighQuality,
+                    title = stringResource(R.string.settings_default_quality),
+                    value = qualityLabel(settings.defaultQuality),
+                    onClick = { showQuality = true },
+                    showDivider = true,
+                )
+                SettingsNavRow(
+                    icon = Icons.Outlined.VideoSettings,
+                    title = stringResource(R.string.settings_default_codec),
+                    value = if (settings.defaultCodec == VideoCodec.H265) "H.265" else "H.264",
+                    onClick = { showCodec = true },
+                    showDivider = false,
+                )
+            }
+        }
+        item {
+            SettingsGroup(stringResource(R.string.settings_section_privacy)) {
+                SettingsSwitchRow(
+                    title = stringResource(R.string.settings_save_to_gallery),
+                    checked = settings.saveToGallery,
+                    onChecked = onSaveGallery,
+                    showDivider = true,
+                )
+                SettingsSwitchRow(
+                    title = stringResource(R.string.settings_haptic_feedback),
+                    checked = settings.hapticEnabled,
+                    onChecked = onHaptic,
+                    showDivider = false,
+                )
+            }
         }
         item {
             Text(
                 text = stringResource(R.string.settings_privacy),
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(vertical = 12.dp),
+                modifier = Modifier.padding(horizontal = 4.dp),
             )
         }
-        item { SectionLabel(stringResource(R.string.settings_section_help)) }
         item {
-            SettingsRow(
-                title = stringResource(R.string.settings_share_app),
-                subtitle = stringResource(R.string.settings_share_app_desc),
-                onClick = {
-                    val send = Intent(Intent.ACTION_SEND).apply {
-                        type = "text/plain"
-                        putExtra(Intent.EXTRA_TEXT, context.getString(R.string.settings_share_message))
-                    }
-                    context.startActivity(Intent.createChooser(send, context.getString(R.string.settings_share_app)))
-                },
-            )
+            SettingsGroup(stringResource(R.string.settings_section_help)) {
+                SettingsNavRow(
+                    icon = Icons.Outlined.Share,
+                    title = stringResource(R.string.settings_share_app),
+                    value = stringResource(R.string.settings_share_app_desc),
+                    onClick = {
+                        val send = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(Intent.EXTRA_TEXT, context.getString(R.string.settings_share_message))
+                        }
+                        context.startActivity(Intent.createChooser(send, context.getString(R.string.settings_share_app)))
+                    },
+                    showDivider = false,
+                )
+            }
         }
         item {
             Text(
                 text = stringResource(R.string.settings_version, "1.0.0"),
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(top = 20.dp, bottom = 24.dp),
+                modifier = Modifier.padding(top = 4.dp, bottom = 16.dp, start = 4.dp),
             )
         }
     }
@@ -203,41 +238,109 @@ fun SettingsScreen(
 }
 
 @Composable
-private fun SectionLabel(text: String) {
-    Text(
-        text = text,
-        style = MaterialTheme.typography.titleSmall,
-        color = MaterialTheme.colorScheme.primary,
-        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp),
-    )
+private fun SettingsGroup(
+    title: String,
+    content: @Composable () -> Unit,
+) {
+    Column {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(start = 4.dp, bottom = 6.dp),
+        )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(16.dp))
+                .background(MaterialTheme.colorScheme.surface),
+        ) {
+            content()
+        }
+    }
 }
 
 @Composable
-private fun SettingsRow(title: String, subtitle: String, onClick: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(vertical = 12.dp),
-    ) {
-        Text(title, style = MaterialTheme.typography.bodyLarge)
-        Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+private fun SettingsNavRow(
+    icon: ImageVector,
+    title: String,
+    value: String,
+    onClick: () -> Unit,
+    showDivider: Boolean,
+) {
+    Column {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(52.dp)
+                .clickable(onClick = onClick)
+                .padding(horizontal = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                icon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(20.dp),
+            )
+            Text(
+                title,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier
+                    .padding(start = 12.dp)
+                    .weight(1f),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                value,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(end = 2.dp),
+            )
+            Icon(
+                Icons.AutoMirrored.Outlined.KeyboardArrowRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(18.dp),
+            )
+        }
+        if (showDivider) {
+            HorizontalDivider(
+                modifier = Modifier.padding(start = 44.dp),
+                color = MaterialTheme.colorScheme.outlineVariant,
+            )
+        }
     }
-    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 }
 
 @Composable
-private fun SwitchRow(title: String, checked: Boolean, onChecked: (Boolean) -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(title, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
-        Switch(checked = checked, onCheckedChange = onChecked)
+private fun SettingsSwitchRow(
+    title: String,
+    checked: Boolean,
+    onChecked: (Boolean) -> Unit,
+    showDivider: Boolean,
+) {
+    Column {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(52.dp)
+                .padding(horizontal = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(title, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+            Switch(checked = checked, onCheckedChange = onChecked)
+        }
+        if (showDivider) {
+            HorizontalDivider(
+                modifier = Modifier.padding(start = 12.dp),
+                color = MaterialTheme.colorScheme.outlineVariant,
+            )
+        }
     }
-    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 }
 
 @Composable
@@ -258,7 +361,7 @@ private fun ChoiceDialog(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable { onSelect(value) }
-                            .padding(vertical = 6.dp),
+                            .padding(vertical = 4.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         RadioButton(selected = value == selected, onClick = { onSelect(value) })
@@ -289,7 +392,7 @@ private fun LanguageDialog(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable { onSelect(language.code) }
-                            .padding(vertical = 6.dp),
+                            .padding(vertical = 4.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         RadioButton(selected = language.code == selected, onClick = { onSelect(language.code) })
